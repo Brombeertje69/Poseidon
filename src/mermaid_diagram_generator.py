@@ -44,6 +44,8 @@ class MermaidSequenceDiagramGenerator:
         """
         lines = []
         for caller_class, _, callee_class, callee_method in calls:
+            if callee_class == 'self':
+                callee_class = caller_class
             lines.append(f'{caller_class} ->> {callee_class}: {callee_method}()')
         return '\n    '.join(lines)
 
