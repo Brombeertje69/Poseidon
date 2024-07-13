@@ -89,3 +89,23 @@ sequenceDiagram
     generator = MermaidSequenceDiagramGenerator(source_code)
     generated_diagram = generator.generate_diagram()
     assert generated_diagram == expected_diagram, f"Expected diagram:\n{expected_diagram}\n\nGenerated diagram:\n{generated_diagram}"
+
+def test_no_method_calls():
+    source_code = '''
+class A:
+    def method1(self):
+        pass
+
+    def method2(self):
+        pass
+
+'''
+    expected_diagram = '''
+sequenceDiagram
+    
+'''
+    generator = MermaidSequenceDiagramGenerator(source_code)
+    generated_diagram = generator.generate_diagram()
+    assert generated_diagram == expected_diagram, f"Expected diagram:\n{expected_diagram}\n\nGenerated diagram:\n{generated_diagram}"
+
+
