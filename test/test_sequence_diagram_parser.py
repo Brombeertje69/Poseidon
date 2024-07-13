@@ -1,6 +1,6 @@
 import pytest
 
-from src.sequence_diagram_parser import parse_source_code
+from src.sequence_diagram_parser import SequenceDiagramParser
 
 
 # Import the SequenceDiagramParser and parse_source_code function
@@ -8,7 +8,16 @@ from src.sequence_diagram_parser import parse_source_code
 # For example, if they are in a file named `sequence_parser.py`, use:
 # from sequence_parser import SequenceDiagramParser, parse_source_code
 
+
 class TestSequenceDiagramParser:
+    def setup_method(self):
+        self.parser = SequenceDiagramParser()
+
+    def __test(self, source_code, expected_calls):
+        self.parser.parse(source_code)
+        calls = self.parser.get_calls()
+        assert calls == expected_calls
+
 
     def test_single_method_call(self):
         source_code = """
@@ -22,7 +31,7 @@ class B:
         pass
 """
         expected_calls = [('A', 'method1', 'b', 'method2')]
-        assert parse_source_code(source_code) == expected_calls
+        self.__test(source_code=source_code, expected_calls=expected_calls)
 
     def test_multiple_method_calls(self):
         source_code = '''
@@ -45,7 +54,7 @@ class C:
             ('A', 'method1', 'b', 'method2'),
             ('A', 'method1', 'c', 'method3')
         ]
-        assert parse_source_code(source_code) == expected_calls
+        self.__test(source_code=source_code, expected_calls=expected_calls)
 
     def test_method_calls_in_different_classes(self):
         source_code = '''
@@ -70,7 +79,7 @@ class C:
             ('C', 'method3', 'a', 'method1'),
             ('C', 'method3', 'b', 'method2')
         ]
-        assert parse_source_code(source_code) == expected_calls
+        self.__test(source_code=source_code, expected_calls=expected_calls)
 
     def test_no_method_calls(self):
         source_code = '''
@@ -83,7 +92,7 @@ class B:
         pass
 '''
         expected_calls = []
-        assert parse_source_code(source_code) == expected_calls
+        self.__test(source_code=source_code, expected_calls=expected_calls)
 
     def test_nested_method_calls(self):
         source_code = '''
@@ -105,7 +114,7 @@ class C:
             ('A', 'method1', 'b', 'method2'),
             ('B', 'method2', 'c', 'method3')
         ]
-        assert parse_source_code(source_code) == expected_calls
+        self.__test(source_code=source_code, expected_calls=expected_calls)
 
     def test_method_calls_on_self(self):
         source_code = '''
@@ -117,4 +126,4 @@ class A:
         pass
 '''
         expected_calls = [('A', 'method1', 'self', 'method2')]
-        assert parse_source_code(source_code) == expected_calls
+        self.__test(source_code=source_code, expected_calls=expected_calls)
