@@ -7,7 +7,7 @@ setup(
     packages=find_packages(),
     entry_points={
         'console_scripts': [
-            'poseidon = poseidon:main',  # This tells setuptools to link the CLI command to your main function
+            'poseidon = src.poseidon:main',  # This tells setuptools to link the CLI command to your main function
         ],
     },
 )
