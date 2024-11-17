@@ -3,6 +3,7 @@ from .package1.baz import compute_sum
 
 def bar(a, b):
     c = foo(a, b)
+    d = bar2()
     return c
 
 bar(3, 5)

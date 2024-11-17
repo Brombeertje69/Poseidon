@@ -29,11 +29,9 @@ class CallGraph:
                         self._add_class(subgraph, definition=definition)
 
                 # Add calls for each function
-                for caller, callee in module.calls.items():
-                    if type (callee) == list:
-                        if callee:
-                            callee = callee[0]
-                            self._add_call(caller, callee)
+                for caller, callees in module.calls.items():
+                    for callee in callees:
+                        self._add_call(caller, callee)
 
     def _add_function(self, graph, full_name, definition: Definition, is_leaf=False):
         """Create a function node, marking leaf nodes in green."""
