@@ -49,7 +49,8 @@ poseidon(
     graph_type='call',
     output_path='output/example_show_all.png',
     exclude_external=False,
-    exclude_private=False
+    exclude_private=False,
+    title='Very cool title'
 )
 
 # Example 7: Show all

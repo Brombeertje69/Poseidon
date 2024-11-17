@@ -7,6 +7,7 @@ from src.graphs import CallGraph
 def poseidon(
         folder_path: str,
         graph_type: str = 'call',
+        title: str = None,
         output_path: str = 'graph.png',
         exclude_private: bool = True,
         exclude_external: bool = True
@@ -16,6 +17,7 @@ def poseidon(
     Args:
         folder_path: The path of the source code to be parsed
         graph_type: The graph type to be produced
+        title: Title of the graph to be produced
         output_path: The path where the graph should be stored
         exclude_private: Option to exclude private functions from the graph
         exclude_external: Option to exclude external calls from the graph
@@ -30,7 +32,7 @@ def poseidon(
     if graph_type == 'call':
         graph = CallGraph()
         graph.build_graph(modules)
-        graph.render(output_path=output_path)
+        graph.render(output_path=output_path, title=title)
 
 
 # Define CLI
@@ -45,7 +47,7 @@ def main():
                         default='call', help="Type of graph to generate (call, sequence, class)")
     parser.add_argument('-v', '--verbose', action='count', default=0,
                         help="Increase verbosity of output (-v for INFO, -vv for DEBUG)")
-
+    parser.add_argument('-t', '--title',  type=str, default=None,  help="Title of the graph")
     # Exclude options
     parser.add_argument('--exclude-private', type=bool, default=True,
                         help="Exclude private methods and attributes (default: True)")

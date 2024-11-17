@@ -58,11 +58,16 @@ class CallGraph:
         logging.debug(f"Adding call from {caller} to {callee}.")
         self.graph.edge(caller, callee)
 
-    def render(self, output_path='call_graph.png'):
+    def render(self, output_path: str ='call_graph.png', title: str = None):
         """Render the graph to a file."""
         # Extract the file extension to determine the format
         base_name, file_extension = os.path.splitext(output_path)
         file_extension = file_extension.lstrip('.')  # Remove leading dot if present
+
+        # Add title to graph
+        if title is None:
+            title = base_name.split('/')[-1]
+        self._add_title(title=title)
 
         # If an extension is provided, use it as the format
         if file_extension:
@@ -81,3 +86,14 @@ class CallGraph:
         # Render the graph with the correct output path and format
         self.graph.render(outfile=output_path, cleanup=True)  # This will use the specified output path
         logging.info(f"Graph rendered and saved to {output_path}")
+
+    def _add_title(self, title):
+        # Add a title to the graph with customization
+        self.graph.attr(
+            label=title,
+            fontsize='28',
+            fontname='Helvetica',
+            fontweight='bold',
+            labelloc='t'
+        )
+
