@@ -133,7 +133,7 @@ class AstWalker(ast.NodeVisitor):
         resolved_classes = {}
         for class_name, definition in classes.items():
             module = definition.module
-            methods_of_class = [method for method in methods if method.class_name == class_name]
+            methods_of_class = {method.name:  method for method in methods if method.class_name == class_name}
             resolved_classes[class_name] = Class(name=class_name, module=module, methods=methods_of_class)
 
         # Clean defintions
