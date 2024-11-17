@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 
  ## [0.0.2] - 17-11-2024
  
-Initial version. 
+Update private and external functions
  
 ### Added
 - Option to exclude private and external functions, including 3 examples
