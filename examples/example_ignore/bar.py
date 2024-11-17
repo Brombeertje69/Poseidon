@@ -15,6 +15,9 @@ class Dog:
         np.testing.assert_allclose(sum, 5)
         return sum
 
+    def fun_with_std_call(self):
+        print('hoi')
+
     def public(self):
         self.__private()
         self._protected()

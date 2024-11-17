@@ -40,7 +40,7 @@ class AstWalker(ast.NodeVisitor):
         self.module_name = module_name
 
         self.visit(tree)
-        self._resolve_imports_in_calls()
+        self._resolve_calls()
         self._resolve_classes_in_definitions()
         logging.debug(f'Extracted definitions and calls for module: {module_name}')
         return self.definitions, self.calls, self.imports
@@ -124,7 +124,7 @@ class AstWalker(ast.NodeVisitor):
             self.imports[name] = full_name
         logging.debug(f"Found import from: {self.imports}")
 
-    def _resolve_imports_in_calls(self):
+    def _resolve_calls(self):
         """
         Resolve function and method calls based on imports and classify all calls.
         """
@@ -136,7 +136,7 @@ class AstWalker(ast.NodeVisitor):
                     # Function is defined in another module
                     callee_full_name = self.imports[callee]
                 elif '.' in callee:
-                    # Check if object called if extern or intern
+                    # Check if object called is extern or intern
                     obj_id = '.'.join(callee.split('.')[:-1])
                     if obj_id not in self.definitions.keys():
                         callee_full_name = callee
@@ -144,7 +144,11 @@ class AstWalker(ast.NodeVisitor):
                         # Function is defined in the current module
                         callee_full_name = f'{self.module_name}.{callee}'
                 else:
-                    callee_full_name = f'{self.module_name}.{callee}'
+                    full_name = f'{self.module_name}.{callee}'
+                    if full_name in self.definitions.keys():
+                        callee_full_name = f'{self.module_name}.{callee}'
+                    else:
+                        callee_full_name = callee
                 resolved_calls[caller].append(callee_full_name)
         self.calls = resolved_calls
         logging.debug(f'Finished resolving calls for module {self.module_name}')
