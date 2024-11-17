@@ -4,6 +4,20 @@ from collections import defaultdict
 
 from src.parser.data_classes import Definition, Class
 
+def get_full_attribute_name(node):
+    """
+    Recursively extract the full name of an ast.Attribute node.
+    E.g., for self.method() it will return 'self.method'.
+    """
+    if isinstance(node, ast.Attribute):
+        # Recursively retrieve the attribute name
+        return f"{get_full_attribute_name(node.value)}.{node.attr}"
+    elif isinstance(node, ast.Name):
+        # Base case: the object name (e.g., 'self')
+        return node.id
+    else:
+        # Handle other cases (e.g., constants, literals)
+        return None
 
 class AstWalker(ast.NodeVisitor):
     """
@@ -73,19 +87,23 @@ class AstWalker(ast.NodeVisitor):
             end_line=getattr(node, 'end_lineno', None),
         )
         logging.debug(f"Found function definition: {func_name}")
-        self._extract_calls_from_function(node, func_name)
+        self._extract_calls_from_function(node, func_name, class_name=class_name)
         self.generic_visit(node)
 
-    def _extract_calls_from_function(self, node: ast.FunctionDef, func_name: str):
+    def _extract_calls_from_function(self, node: ast.FunctionDef, func_name: str, class_name: str = None):
         """
         Extract all function or method calls from a function or method body.
         """
         for child_node in ast.walk(node):
             if isinstance(child_node, ast.Call):
-                if isinstance(child_node.func, ast.Name):  # Simple call
-                    self.calls[func_name].append(child_node.func.id)
-                elif isinstance(child_node.func, ast.Attribute):  # Object.method()
-                    self.calls[func_name].append(child_node.func.attr)
+                func = child_node.func
+                if isinstance(func, ast.Name):  # Simple call
+                    self.calls[func_name].append(func.id)
+                elif isinstance(func, ast.Attribute):
+                    full_name = get_full_attribute_name(func)# Object.method()
+                    if class_name: # If a class name is supplied, replace 'self' by the name of the class
+                       full_name = full_name.replace('self', class_name)
+                    self.calls[func_name].append(full_name)
 
     def visit_Import(self, node: ast.Import):
         """
