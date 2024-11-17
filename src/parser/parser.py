@@ -7,15 +7,18 @@ from src.parser.data_classes import Module
 
 
 class Parser:
-    def __init__(self, resolve_imports=True, resolve_classes=True):
+    def __init__(
+             self,
+             exclude_private: bool = False,
+             exclude_external: bool = False,
+        ):
         """Initialize the parser with a folder path.
 
         Args:
-            resolve_imports (bool): Option to automatically resolve import in function calls
+            exclude_external: exclude calls to external functions from parsed results
+            exclude_private: exclude private calls from parsed results
         """
-        self.resolve_imports = resolve_imports
-        self.resolve_classes = resolve_classes
-        self.ast_walker = AstWalker()  # Create an instance of AstWalker
+        self.ast_walker = AstWalker(exclude_private=exclude_private, exclude_external=exclude_external)
 
     def parse_folder(self, folder_path) -> dict[str, Module]:
         """
