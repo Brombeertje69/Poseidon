@@ -6,6 +6,8 @@ indicating that the public one is being called.
 """
 import numpy as np
 
+from .foo import foo
+
 class Dog:
     def fun_with_external_call(self):
         array = np.array([2, 3])
@@ -22,6 +24,9 @@ class Dog:
 
     def _protected(self):
         compute_sum()
+
+    def foo(self):
+        foo()
 
 
 def compute_sum(a, b):
