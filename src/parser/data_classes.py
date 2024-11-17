@@ -26,4 +26,4 @@ class Class:
     """Represents a function, method, or class definition."""
     name: str
     module: str
-    methods: list[Definition] = None
+    methods: dict[str, Definition] = None

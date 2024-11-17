@@ -4,9 +4,27 @@ import logging
 from src.parser import Parser
 from src.graphs import CallGraph
 
-def poseidon(folder_path, graph_type, output_path):
+def poseidon(
+        folder_path: str,
+        graph_type: str = 'call',
+        output_path: str = 'graph.png',
+        exclude_private: bool = True,
+        exclude_external: bool = True
+    ):
+    """ The high-level function that combines the parser with the graphs
+
+    Args:
+        folder_path: The path of the source code to be parsed
+        graph_type: The graph type to be produced
+        output_path: The path where the graph should be stored
+        exclude_private: Option to exclude private functions from the graph
+        exclude_external: Option to exclude external calls from the graph
+    """
     # Setup the parser
-    parser = Parser()
+    parser = Parser(
+        exclude_private=exclude_private,
+        exclude_external=exclude_external
+    )
     modules = parser.parse_folder(folder_path=folder_path)
 
     if graph_type == 'call':
@@ -28,6 +46,12 @@ def main():
     parser.add_argument('-v', '--verbose', action='count', default=0,
                         help="Increase verbosity of output (-v for INFO, -vv for DEBUG)")
 
+    # Exclude options
+    parser.add_argument('--exclude-private', type=bool, default=True,
+                        help="Exclude private methods and attributes (default: True)")
+    parser.add_argument('--exclude-external', type=bool, default=True,
+                        help="Exclude external calls outside the inspected folder (default: True)")
+
     # Parse the arguments
     args = parser.parse_args()
 
@@ -41,7 +65,7 @@ def main():
     logging.basicConfig(level=log_lvl, format='%(asctime)s - %(levelname)s - %(message)s')
 
     # Call the poseidon function with the parsed arguments
-    poseidon(args.folder, args.graph_type, args.o)
+    poseidon(**vars(args))
 
 
 if __name__ == "__main__":

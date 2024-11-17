@@ -47,7 +47,7 @@ class CallGraph:
         with graph.subgraph(name=f"cluster_{module}_{class_name}") as class_graph:
             class_graph.attr(label=f'Class: {class_name}',
                              style='solid', color='black', penwidth='0.7', bgcolor='#f2f2f2' )  # Box for class
-            for method in methods:
+            for method_name, method in methods.items():
                 full_name = f'{module}.{method.class_name}.{method.name}'
                 logging.debug(f'adding method {full_name}')
                 self._add_function(class_graph, full_name, definition=method)

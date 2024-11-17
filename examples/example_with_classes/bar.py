@@ -2,7 +2,7 @@ from .foo import foo
 
 class Dog:
     def bark(self, text):
-        print('Wooffff!')
+        return foo()
 
     def fun2(self):
         c = foo(3, 4)
