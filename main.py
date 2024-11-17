@@ -1,24 +1,43 @@
-from src.parser import Parser
-from src.graphs import CallGraph
-
 import logging
 
+from src.poseidon import poseidon
+
 # Configure logging
-logging.basicConfig(level=logging.info, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 # Example 1
-# folder_path = "examples/example_with_modules"  # Replace with the path to your folder
-# parser = Parser()
-# modules = parser.parse_folder(folder_path=folder_path)
-# graph = CallGraph()
-# graph.build_graph(modules)
-# graph.render(output_path='output/example_with_modules.jpg')
-
+poseidon(
+    folder_path="examples/example_with_modules",
+    graph_type='call',
+    output_path='output/example_with_modules.jpg'
+)
 
 # Example 2
-folder_path = "examples/example_with_classes"  # Replace with the path to your folder
-parser = Parser()
-modules = parser.parse_folder(folder_path=folder_path)
-graph = CallGraph()
-graph.build_graph(modules)
-graph.render(output_path='output/example_with_classes.png')
+poseidon(
+    folder_path="examples/example_with_classes",
+    graph_type='call',
+    output_path='output/example_with_classes.png'
+)
+
+# Example 3
+poseidon(
+    folder_path="examples/example_ignore",
+    graph_type='call',
+    output_path='output/example_ignore_show_all.png'
+)
+
+
+# Example 4
+poseidon(
+    folder_path="examples/example_ignore",
+    graph_type='call',
+    output_path='output/example_show_private.png',
+    exclude_private=False,
+)
+
+poseidon(
+    folder_path="examples/example_ignore",
+    graph_type='call',
+    output_path='output/example_show_external.png',
+    exclude_external=False,
+)
