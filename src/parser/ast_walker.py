@@ -82,7 +82,7 @@ class AstWalker(ast.NodeVisitor):
             name=node.name,
             type=func_type,
             module=self.module_name,
-            class_name= class_name,
+            class_name=class_name,
             start_line=node.lineno,
             end_line=getattr(node, 'end_lineno', None),
         )
@@ -135,8 +135,15 @@ class AstWalker(ast.NodeVisitor):
                 if callee in self.imports:
                     # Function is defined in another module
                     callee_full_name = self.imports[callee]
+                elif '.' in callee:
+                    # Check if object called if extern or intern
+                    obj_id = '.'.join(callee.split('.')[:-1])
+                    if obj_id not in self.definitions.keys():
+                        callee_full_name = callee
+                    else:
+                        # Function is defined in the current module
+                        callee_full_name = f'{self.module_name}.{callee}'
                 else:
-                    # Function is defined in the current module
                     callee_full_name = f'{self.module_name}.{callee}'
                 resolved_calls[caller].append(callee_full_name)
         self.calls = resolved_calls
