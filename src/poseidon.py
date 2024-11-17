@@ -30,9 +30,9 @@ def poseidon(
     modules = parser.parse_folder(folder_path=folder_path)
 
     if graph_type == 'call':
-        graph = CallGraph()
+        graph = CallGraph(output_path=output_path, title=title)
         graph.build_graph(modules)
-        graph.render(output_path=output_path, title=title)
+        graph.render()
 
 
 # Define CLI
