@@ -51,3 +51,11 @@ poseidon(
     exclude_external=False,
     exclude_private=False
 )
+
+# Example 7: Show all
+poseidon(
+    folder_path="src",
+    graph_type='call',
+    output_path='output/poseidon.png',
+    exclude_private=False
+)
