@@ -56,12 +56,14 @@ class AstWalker(ast.NodeVisitor):
         self.module_name = module_name
 
         self.visit(tree)
+
+        # Process -> should be moved to parser!
         if self.exclude_private:
             self._remove_private_definitions()
             self._remove_private_calls()
         self._resolve_calls()
         self._resolve_classes_in_definitions()
-
+        self._remove_constructor_calls()
         logging.debug(f'Extracted definitions and calls for module: {module_name}')
         return self.definitions, self.calls, self.imports
 
@@ -193,13 +195,13 @@ class AstWalker(ast.NodeVisitor):
             caller_fun = caller.split('.')[-1:][0]
             if caller_fun.startswith(PRIVATE_INDICATORS):
                 self.calls.pop(caller)
-                logging.info(f'removed private caller {caller}')
+                logging.debug(f'removed private caller {caller}')
             # Remove private callees
             for callee in list(callees):
                 callee_fun = callee.split('.')[-1:][0]
                 if callee_fun.startswith(PRIVATE_INDICATORS):
                     self.calls[caller].remove(callee)
-                    logging.info(f'removed private callee {callee}')
+                    logging.debug(f'removed private callee {callee}')
 
 
     def _resolve_classes_in_definitions(self):
@@ -218,3 +220,17 @@ class AstWalker(ast.NodeVisitor):
         other_defintions = {k: v for k,v in definitions.items() if v.type not in ['method', 'class']}
         resolved_definitions = {**other_defintions, **resolved_classes}
         self.definitions = resolved_definitions
+
+    def _remove_constructor_calls(self):
+        for caller, callees in list(self.calls.items()):
+            for callee in callees:
+                # Check called function is a class defined in this file
+                if callee in self.definitions.keys():
+                    if type(self.definitions[callee]) == Class:
+                        # Found a call to a defined in the module class
+                        self.calls[caller].remove(callee)
+                        logging.debug(f'removed call from {caller} to {callee}')
+                # Check called function is class defined in
+                elif callee in self.imports.values():
+                    self.calls[caller].remove(callee)
+                    logging.debug(f'removed call from {caller} to {callee}')
