@@ -81,7 +81,8 @@ class CallGraph:
     def _init_graph(self):
         # Create empty graph
         self.graph = graphviz.Digraph(engine='dot')
-        self.graph.attr(dpi='300')  # High-quality output
+        self.graph.attr(splines='ortho', dpi='300', compound='true', rankdir='LR')
+
         self._set_format()
 
 
